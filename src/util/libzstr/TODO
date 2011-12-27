@@ -1,0 +1,2 @@
+ * use "handle this memory exhaustion please" function pointer instead of ad-hoc magic return values to handle memory exhaustion
+

@@ -1,0 +1,5 @@
+ * make nifty variadic runtime_assert, using zprintf (not yet written)
+ * fix type_MAX and type_MIN macros to work in #if preprocessor lines (xxx ? maybe impossible)
+ * optimize macros to ease the challenge to the preprocessor (re: bugs, long compile time)
+
+
