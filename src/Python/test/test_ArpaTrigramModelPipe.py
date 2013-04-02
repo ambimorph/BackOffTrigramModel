@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-import BackOffTrigramModelPipe, unittest
-import sys
+import BackOffTrigramModelPipe
+import unittest, sys
 
 EPSILON = .0000001
 
-tmpipeobj = BackOffTrigramModelPipe.BackOffTMPipe("../../C/BackOffTrigramModelPipe", "data/mini.arpa")
+tmpipeobj = BackOffTrigramModelPipe.BackOffTMPipe("../C/BackOffTrigramModelPipe", "test/data/mini.arpa")
 
 class BackOffTMPipeTest(unittest.TestCase):
     def test_trigram_probability(self):

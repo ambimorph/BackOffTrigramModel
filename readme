@@ -7,6 +7,15 @@ BackOffTrigramModel reads an arpa format trigram model and calculates trigram
 probabilities according to the standard Katz back-off method.  The values are
 stored in a Judy tree, and a Python interface is implemented.  
 
+Installing:
+From src/C, run
+$ make
+
+
+Testing:
+From src/Python, run 
+$ python -m unittest discover
+
 
 License:
 
