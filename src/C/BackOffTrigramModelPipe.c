@@ -1,8 +1,12 @@
 #include <string.h>
 #include <stdio.h>
+
 #include "zstr.h"
+
 #include "BackOffTrigramModel.h"
+
 #include "Judy.h"
+
 #include <assert.h>
 
 int
@@ -43,8 +47,8 @@ main(int argc, char** argv) {
                         printf("%f\n", uniprob);
                         fflush(stdout);
                 }
-                
-                if (*p == 'o'){
+
+                else if (*p == 'o'){ // unigram backoff
                         p+=2; // command and space
                         JSLG(ptr, UB, p);
                         if (ptr == NULL) {
@@ -57,7 +61,7 @@ main(int argc, char** argv) {
                         }
                 }
 
-                else if (*p == 't') {
+                else if (*p == 't') { // trigram probability
                         p+=2; // command and space
                         float triprob = trigram_split_unkify_prob_3(cs_as_z((char*)p), &UP, &UB, &BP, &BB, &TP);
                         printf("%f\n", triprob);
@@ -65,7 +69,7 @@ main(int argc, char** argv) {
                         /* printf(inputbuf); */
                 }
 
-                else if (*p == 'v') {
+                else if (*p == 'v') { // in vocabulary
                         p+=2; // command and space
                         JSLG(ptr, UP, p);
                         if (ptr == NULL) {
@@ -77,6 +81,34 @@ main(int argc, char** argv) {
                                 fflush(stdout);
                         }
                 }
+
+                else if (*p == 'w') { // trigram attested
+                        p+=2; // command and space
+                        JSLG(ptr, TP, p);
+                        if (ptr == NULL) {
+                                printf("0\n");
+                                fflush(stdout);
+                        }
+                        else {
+                                printf("1\n");
+                                fflush(stdout);
+                        }
+                }
+
+		else if (*p == 'U') { // is this a unk model? prob of unk?
+			*p = UNKBYTESTR[0];
+			JSLG(ptr, UP, p);
+                        if (ptr == NULL) {
+                                printf("None\n");
+                                fflush(stdout);
+                        }
+                        else {
+                                printf("%f\n", *(float*)ptr);
+                                fflush(stdout);
+                        }
+		}
+			
+
 
         } while (i > 0);
 

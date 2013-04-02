@@ -40,10 +40,18 @@ _read_unigram(char**const pbuf, Pvoid_t*const P, Pvoid_t*const B) {
 
   float prob = strtod(*pbuf, (char**)pbuf);
   const char* wordp=(*pbuf)+1; /* pointer to the beginning of the word */
-  char* afterwordp = strpbrk(wordp, " \t");
+  char* afterwordp = strpbrk(wordp, " \t\n");
   assert (afterwordp != NULL);
   assert ((afterwordp - wordp) <= MAXUNIGRAMSIZE);
-  float backoff = strtod(afterwordp, (char**)pbuf);
+  float backoff;
+  if (*afterwordp == '\n') {
+    backoff = 0;
+    *pbuf = afterwordp;
+  }
+  else {
+    backoff = strtod(afterwordp, (char**)pbuf);
+  }
+  
 
   PWord_t ptr;
 
@@ -83,7 +91,7 @@ _read_bigram(char**const pbuf, Pvoid_t*const UP, Pvoid_t*const P, Pvoid_t*const 
   assert (ptr == NULL);
   *afterfirstwordp = tmp;
   char* secondwordp = afterfirstwordp+1;
-  char* aftersecondwordp = strpbrk(secondwordp, " \t");
+  char* aftersecondwordp = strpbrk(secondwordp, " \t\n");
   assert (aftersecondwordp != NULL);
   tmp = *aftersecondwordp;
   *aftersecondwordp = '\0';
@@ -91,7 +99,14 @@ _read_bigram(char**const pbuf, Pvoid_t*const UP, Pvoid_t*const P, Pvoid_t*const 
   assert (ptr == NULL);
   *aftersecondwordp = tmp;
   assert ((aftersecondwordp - firstwordp) <= MAXBIGRAMSIZE);
-  float backoff = strtod(aftersecondwordp, pbuf);
+  float backoff;
+  if (tmp == '\n') {
+    backoff = 0;
+    *pbuf = aftersecondwordp;
+  }
+  else {
+    backoff = strtod(aftersecondwordp, pbuf);
+  }
 
   char buf[MAXBIGRAMSIZE+1]; /* +1 for null-terminating char */
   char* indexp = firstwordp;
@@ -135,8 +150,6 @@ void
 _read_trigram(char**const pbuf, Pvoid_t*const P) {
   assert (sizeof(Word_t) >= sizeof(float));
 
-  #ifndef NDEBUG
-  #endif
   float prob = strtod(*pbuf, pbuf);
   char* firstwordp=(*pbuf)+1; /* pointer to the beginning of the first word */
   char* afterfirstwordp = strpbrk(firstwordp, " \t");
@@ -148,6 +161,7 @@ _read_trigram(char**const pbuf, Pvoid_t*const P) {
   assert (thirdwordp != NULL);
   char* afterthirdwordp = strpbrk(thirdwordp, " \n");
   assert (afterthirdwordp != NULL);
+  assert (*afterthirdwordp == '\n');
   assert ((afterthirdwordp - firstwordp) <= MAXTRIGRAMSIZE);
 
   char buf[MAXBIGRAMSIZE+1]; /* +1 for null-terminating char */
@@ -206,6 +220,7 @@ _read_trigram(char**const pbuf, Pvoid_t*const P) {
   PWord_t ptr;
   zbyte temp = *afterindexp;
   *afterindexp = '\0';
+  assert (strchr(indexp, '\n') == NULL);
   JSLI(ptr, *P, (unsigned char*)indexp);
   memcpy(ptr, &prob, sizeof(prob));
   *afterindexp = temp;
