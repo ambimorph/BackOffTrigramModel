@@ -19,7 +19,7 @@ DEBUGMODE=True
 # DEBUGMODE=False
 
 ifeq ($(DEBUGMODE),True)
-CFLAGS=-Wall -O0
+CFLAGS=-Wall -O0 -Werror
 CFLAGS += -g
 LDFLAGS += -g
 else
