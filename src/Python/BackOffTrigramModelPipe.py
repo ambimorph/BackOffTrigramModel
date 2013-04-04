@@ -14,6 +14,10 @@ class BackOffTMPipe:
         self.stdin.write("v " + token + '\n')
         return int(self.stdout.readline())
 
+    def vocabulary_with_prefix(self, prefix):
+        self.stdin.write("p " + prefix + '\n')
+        return self.stdout.readline().split()
+
     def unigram_probability(self, token):
         if self.in_vocabulary(token):
             self.stdin.write("u " + token + '\n')

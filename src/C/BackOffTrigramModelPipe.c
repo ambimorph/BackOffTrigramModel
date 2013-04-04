@@ -107,6 +107,20 @@ main(int argc, char** argv) {
                                 fflush(stdout);
                         }
 		}
+                else if (*p == 'p') { // in vocabulary
+		  p+=2; // command and space
+		  size_t prefixlength = i - 2;
+		  zbyte prefix[MAXUNIGRAMSIZE];
+		  memcpy (prefix, p, prefixlength);
+		  JSLF(ptr, UP, p);
+		  while ((ptr != NULL) && (memcmp(p, prefix, prefixlength) == 0)) {
+		    printf("%s ", p);
+		    fflush(stdout);
+		    JSLN(ptr, UP, p);
+		  }
+		  printf("\n");
+		  fflush(stdout);
+		}
 			
 
 

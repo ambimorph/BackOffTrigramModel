@@ -54,6 +54,13 @@ class TmpipeUnklessTest(unittest.TestCase):
 
 
 class TmpipeUnkfulTest(unittest.TestCase):
+        
+    def test_get_vocabulary_with_prefix(self):
+        prefix = unkful_tmpipe_obj.vocabulary_with_prefix('c')
+        self.assertListEqual(prefix, ["can", "cost", "country"], prefix)
+        prefix = unkful_tmpipe_obj.vocabulary_with_prefix("gen")
+        self.assertListEqual(prefix, ["generation", "genetic"], prefix)
+
 
     def test_unigram_probability(self):
         probability = unkful_tmpipe_obj.unigram_probability('"')
