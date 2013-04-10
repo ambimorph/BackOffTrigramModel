@@ -78,7 +78,7 @@ $(TMPIPE): $(TMPIPEOBJS) $(STATICLIB) ../util/libzstr/libzstr.a
 	$(CC) $+ -o $@ $(LDFLAGS)
 
 test:
-	cd ../Python/test && PYTHONPATH=${PYTHONPATH}:${PWD}/../Python python -u ./test_ArpaTrigramModelPipe.py
+	cd ../Python && python -m unittest discover
 
 clean:
 	-rm $(STATICLIB) $(SHAREDLIB) $(OBJS) $(TMPIPE) $(TMPIPEOBJS) *.d *.class 2>/dev/null
