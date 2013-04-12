@@ -4,8 +4,8 @@ MAKESHAREDLIB=False
 # MAKESHAREDLIB=True
 
 
-INCDIRS=-I../util/libzutil/ -I../util/libzstr/ $(EXTRA_INC_DIRS)
-LIBDIRS=-L../util/libzutil/ -L../util/libzstr/ $(EXTRA_LIB_DIRS)
+INCDIRS=-Isrc/util/libzutil/ -Isrc/util/libzstr/ $(EXTRA_INC_DIRS)
+LIBDIRS=-Lsrc/util/libzutil/ -Lsrc/util/libzstr/ $(EXTRA_LIB_DIRS)
 LIBS=-lzstr -lzutil -lJudy -lm
 
 LIBPREFIX=lib
@@ -32,23 +32,23 @@ CFLAGS += $(INCDIRS)
 LDFLAGS += $(LIBDIRS) $(LIBS)
 
 # SRCS=$(wildcard *.c)
-SRCS=BackOffTrigramModel.c
-TMPIPESRCS=BackOffTrigramModelPipe.c
+SRCS=src/C/BackOffTrigramModel.c
+TMPIPESRCS=src/C/BackOffTrigramModelPipe.c
 OBJS=$(SRCS:%.c=%.o)
 TMPIPEOBJS=$(TMPIPESRCS:%.c=%.o)
 
-TMPIPE=BackOffTrigramModelPipe
-STATICLIB=$(LIBPREFIX)$(NAME)$(STATICLIBSUFFIX)
-SHAREDLIB=$(LIBPREFIX)$(NAME)$(SHAREDLIBSUFFIX)
+TMPIPE=bin/BackOffTrigramModelPipe
+STATICLIB=src/C/$(LIBPREFIX)$(NAME)$(STATICLIBSUFFIX)
+SHAREDLIB=src/C/$(LIBPREFIX)$(NAME)$(SHAREDLIBSUFFIX)
 
 
 all: $(TMPIPE) 
 
-../util/libzutil/libzutil.a: 
-	cd ../util/libzutil && make libzutil.a
+src/util/libzutil/libzutil.a: 
+	cd src/util/libzutil && make libzutil.a
 
-../util/libzstr/libzstr.a: ../util/libzutil/libzutil.a
-	cd ../util/libzstr && make libzstr.a
+src/util/libzstr/libzstr.a: src/util/libzutil/libzutil.a
+	cd src/util/libzstr && make libzstr.a
 
 staticlib: $(STATICLIB)
 
@@ -74,13 +74,18 @@ $(STATICLIB): $(OBJS)
 $(SHAREDLIB): $(OBJS)
 	$(CC) -o $@ $+ -shared -fPIC
 
-$(TMPIPE): $(TMPIPEOBJS) $(STATICLIB) ../util/libzstr/libzstr.a
+$(TMPIPE): $(TMPIPEOBJS) $(STATICLIB) src/util/libzstr/libzstr.a
+	mkdir bin
 	$(CC) $+ -o $@ $(LDFLAGS)
 
 test:
-	cd ../Python && python -m unittest discover
+	PATH=$(PATH):$(PWD)/bin ; export PATH ; cd src/Python/BackOffTrigramModel && python -m unittest discover
 
 clean:
 	-rm $(STATICLIB) $(SHAREDLIB) $(OBJS) $(TMPIPE) $(TMPIPEOBJS) *.d *.class 2>/dev/null
 
-.PHONY: clean all staticlib sharedlib 
+install: $(TMPIPE)
+	-install $(TMPIPE) $(prefix)/bin
+	-python setup.py install
+
+.PHONY: clean all staticlib sharedlib install

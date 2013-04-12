@@ -31,10 +31,10 @@ It was tested under the following versions:
 * Python 2.7.3
 * GNU make 3.81
 
-==========
-Installing
-==========
-From src/C, run
+========
+Building
+========
+run
 ::
 
  $ make
@@ -42,7 +42,20 @@ From src/C, run
 =================
 Running the tests
 =================
-From src/Python, run 
+run
 ::
 
- $ python -m unittest discover
+ $ make test
+
+==========
+Installing
+==========
+run
+::
+
+ $ make install
+
+This will copy the ``BackOffTrigramModelPipe`` executable into $prefix/bin
+and will execute ``python setup.py install``, which will result in the
+BackOffTrigramModel Python module being copied into the appropriate place in
+your Python installation.
