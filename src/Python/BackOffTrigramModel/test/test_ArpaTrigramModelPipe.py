@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import BackOffTrigramModelPipe
-import unittest, sys
+import unittest
 
-unkless_tmpipe_obj = BackOffTrigramModelPipe.BackOffTMPipe("../C/BackOffTrigramModelPipe", "test/data/pos_trigram_model_0.05K.arpa")
-unkful_tmpipe_obj = BackOffTrigramModelPipe.BackOffTMPipe("../C/BackOffTrigramModelPipe", "test/data/trigram_model_0.1K.arpa")
+unkless_tmpipe_obj = BackOffTrigramModelPipe.BackOffTMPipe("BackOffTrigramModelPipe", "test/data/pos_trigram_model_0.05K.arpa")
+unkful_tmpipe_obj = BackOffTrigramModelPipe.BackOffTMPipe("BackOffTrigramModelPipe", "test/data/trigram_model_0.1K.arpa")
 
 DECIMAL_PLACES = 5
 

@@ -34,7 +34,7 @@ It was tested under the following versions:
 ========
 Building
 ========
-From src/C, run
+run
 ::
 
  $ make
@@ -42,7 +42,7 @@ From src/C, run
 =================
 Running the tests
 =================
-From src/C, run
+run
 ::
 
  $ make test
@@ -50,12 +50,12 @@ From src/C, run
 ==========
 Installing
 ==========
-From src/C, run
+run
 ::
 
  $ make install
 
 This will copy the ``BackOffTrigramModelPipe`` executable into $prefix/bin
-and will execute ``python setup.py install`` in the src/Python directory,
-which will result in the BackOffTrigramModelPipe.py Python module being
-copied into the appropriate place in your Python installatio n.
+and will execute ``python setup.py install``, which will result in the
+BackOffTrigramModel Python module being copied into the appropriate place in
+your Python installation.
