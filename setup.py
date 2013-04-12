@@ -14,7 +14,7 @@ versioneer.versionfile_build = os.path.join('BackOffTrigramModel', '_version.py'
 versioneer.tag_prefix = PKG+'-' # tags are like 1.2.0
 versioneer.parentdir_prefix = versioneer.tag_prefix
 
-from setuptools import setup
+from distutils.core import setup
 
 trove_classifiers=[
     "Environment :: Console",
@@ -44,15 +44,13 @@ except UnicodeDecodeError:
 def _setup(longdescription):
     setup(name=PKG,
           version=versioneer.get_version(),
-          description='Python wrappers for a few algorithms from the Crypto++ library',
+          description='trigram model with back-off method',
           long_description=longdescription,
-          author='Zooko Wilcox-O\'Hearn',
-          author_email='zooko@zooko.com',
-          url='https://tahoe-lafs.org/trac/' + PKG,
+          author='L. Amber Wilcox-O\'Hearn',
+          author_email='amber.wilcox.ohearn@gmail.com',
+          packages=['BackOffTrigramModel'],
           package_dir = {'': os.path.join('src', 'Python')},
           classifiers=trove_classifiers,
-          test_suite="test",
-          zip_safe=False, # I prefer unzipped for easier access.
           cmdclass=versioneer.get_cmdclass(),
           )
 
