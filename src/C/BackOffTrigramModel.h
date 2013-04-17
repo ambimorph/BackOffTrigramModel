@@ -1,7 +1,7 @@
 #include "Judy.h"
 #include "zstr.h"
 
-const static size_t MAXWORDSIZE=64;
+const static size_t MAXWORDSIZE=256;
 #define MAXUNIGRAMSIZE ((size_t)(17 + MAXWORDSIZE))
 #define MAXBIGRAMSIZE ((size_t)(17 + 2 * MAXWORDSIZE))
 #define MAXTRIGRAMSIZE ((size_t)(17 + 3 * MAXWORDSIZE))
