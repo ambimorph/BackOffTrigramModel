@@ -10,6 +10,10 @@ DECIMAL_PLACES = 5
 
 class TmpipeUnklessTest(unittest.TestCase):
 
+    def test_unicode(self):
+	unicode_char = u'\xb6'
+	unkless_tmpipe_obj.in_vocabulary(unicode_char) 
+
     def test_in_vocabulary(self):
         assert unkless_tmpipe_obj.in_vocabulary('"')
         assert unkless_tmpipe_obj.in_vocabulary("'s")
