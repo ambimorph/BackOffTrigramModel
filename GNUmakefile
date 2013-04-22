@@ -3,7 +3,6 @@ NAME=BackOffTrigramModelPipe
 MAKESHAREDLIB=False
 # MAKESHAREDLIB=True
 
-
 INCDIRS=-Isrc/util/libzutil/ -Isrc/util/libzstr/ $(EXTRA_INC_DIRS)
 LIBDIRS=-Lsrc/util/libzutil/ -Lsrc/util/libzstr/ $(EXTRA_LIB_DIRS)
 LIBS=-lzstr -lzutil -lJudy -lm
@@ -61,6 +60,10 @@ ifneq (,$(SRCS:%.c=%.d))
 endif
 endif
 
+ifeq ($(PYTHON),)
+PYTHON=python
+endif
+
 %.d: %.c
 	@echo remaking $@
 	@set -e; $(CC) $(CPPFLAGS) $(CFLAGS) -MM $< \
@@ -75,17 +78,17 @@ $(SHAREDLIB): $(OBJS)
 	$(CC) -o $@ $+ -shared -fPIC
 
 $(TMPIPE): $(TMPIPEOBJS) $(STATICLIB) src/util/libzstr/libzstr.a
-	mkdir bin
+	mkdir -p bin
 	$(CC) $+ -o $@ $(LDFLAGS)
 
 test:
-	PATH=$(PATH):$(PWD)/bin ; export PATH ; cd src/Python/BackOffTrigramModel && python -m unittest discover
+	PATH=$(PATH):$(PWD)/bin ; export PATH ; cd src/Python/BackOffTrigramModel && $(PYTHON) -m unittest discover
 
 clean:
 	-rm $(STATICLIB) $(SHAREDLIB) $(OBJS) $(TMPIPE) $(TMPIPEOBJS) *.d *.class 2>/dev/null
 
 install: $(TMPIPE)
 	-install $(TMPIPE) $(prefix)/bin
-	-python setup.py install
+	-$(PYTHON) setup.py install
 
 .PHONY: clean all staticlib sharedlib install
