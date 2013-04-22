@@ -124,7 +124,11 @@ main(int argc, char** argv) {
 			
 
 
-        } while (i > 0);
+        } while (
+            (i > 0) &&
+            (feof(stdin) == 0) &&
+            (ferror(stdin) == 0)
+            );
 
         Word_t temp;
         JSLFA(temp, UP);
