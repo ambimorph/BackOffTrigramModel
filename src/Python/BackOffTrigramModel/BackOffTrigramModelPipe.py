@@ -16,7 +16,7 @@ class BackOffTMPipe:
 
     def vocabulary_with_prefix(self, prefix):
         self.stdin_byte_writer.write("p " + prefix + '\n')
-        return self.stdout.readline().split()
+        return [ b.decode('utf-8') for b in self.stdout.readline().split() ]
 
     def unigram_probability(self, token):
         if self.in_vocabulary(token):
