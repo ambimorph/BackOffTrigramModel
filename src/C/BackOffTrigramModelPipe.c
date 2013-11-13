@@ -107,7 +107,7 @@ main(int argc, char** argv) {
                                 fflush(stdout);
                         }
 		}
-                else if (*p == 'p') { // in vocabulary
+                else if (*p == 'p') { // all vocabulary starting with prefix
 		  p+=2; // command and space
 		  size_t prefixlength = i - 2;
 		  zbyte prefix[MAXUNIGRAMSIZE];
