@@ -45,6 +45,7 @@ class BackOffTMPipe:
     def shutdown(self):
         if hasattr(self, "tmpipe"):
             if hasattr(self.tmpipe, "pid") and self.tmpipe.pid:
+                import os
                 os.kill(self.tmpipe.pid, 15)
             self.tmpipe.wait()
 
