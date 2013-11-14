@@ -29,8 +29,8 @@ main(int argc, char** argv) {
     zbyte inputbuf[MAXTRIGRAMSIZE + 4];
     zbyte* p;
     PWord_t ptr;
-
     size_t i;
+
     do {
 	fgets((char*)inputbuf, MAXTRIGRAMSIZE + 4, stdin);
 	i = strlen((char*)inputbuf);
@@ -41,11 +41,43 @@ main(int argc, char** argv) {
 	}
 
 	p = inputbuf;
-	if (*p == 'u'){ // unigram probability
-	    p+=2; // command and space
-	    float uniprob = unigram_prob_1(cs_as_z((char*)p), &UP);
-	    printf("%f\n", uniprob);
-	    fflush(stdout);
+
+	if (*p == 'i') { 
+	    if (*(p+1) == 'u') { // in unigrams
+		p+=3; // command and space
+		JSLG(ptr, UP, p);
+		if (ptr == NULL) {
+		    printf("0\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("1\n");
+		    fflush(stdout);
+		}
+	    }
+	}
+
+	else if (*p == 'u'){ 
+	    if (*(p+1) == 'p') { // unigram probability
+		p+=3; // command and space
+		float uniprob = unigram_prob_1(cs_as_z((char*)p), &UP);
+		printf("%f\n", uniprob);
+		fflush(stdout);
+	    }
+	    else if (*(p+1) == 's') { // all vocabulary starting with prefix
+		p+=3; // command and space
+		size_t prefixlength = i - 3;
+		zbyte prefix[MAXUNIGRAMSIZE];
+		memcpy (prefix, p, prefixlength);
+		JSLF(ptr, UP, p);
+		while ((ptr != NULL) && (memcmp(p, prefix, prefixlength) == 0)) {
+		    printf("%s ", p);
+		    fflush(stdout);
+		    JSLN(ptr, UP, p);
+		}
+		printf("\n");
+		fflush(stdout);
+	    }
 	}
 
 	else if (*p == 'o'){ // unigram backoff
@@ -61,23 +93,11 @@ main(int argc, char** argv) {
 	    }
 	}
 
-	else if (*p == 't') { // trigram probability
-	    p+=2; // command and space
-	    float triprob = trigram_split_unkify_prob_3(cs_as_z((char*)p), &UP, &UB, &BP, &BB, &TP);
-	    printf("%f\n", triprob);
-	    fflush(stdout);
-	    /* printf(inputbuf); */
-	}
-
-	else if (*p == 'v') { // in vocabulary
-	    p+=2; // command and space
-	    JSLG(ptr, UP, p);
-	    if (ptr == NULL) {
-		printf("0\n");
-		fflush(stdout);
-	    }
-	    else {
-		printf("1\n");
+	else if (*p == 't') {
+	    if (*(p+1) == 'p') { // trigram probability
+		p+=3; // command and space
+		float triprob = trigram_split_unkify_prob_3(cs_as_z((char*)p), &UP, &UB, &BP, &BB, &TP);
+		printf("%f\n", triprob);
 		fflush(stdout);
 	    }
 	}
@@ -106,20 +126,6 @@ main(int argc, char** argv) {
 		printf("%f\n", *(float*)ptr);
 		fflush(stdout);
 	    }
-	}
-	else if (*p == 'p') { // all vocabulary starting with prefix
-	    p+=2; // command and space
-	    size_t prefixlength = i - 2;
-	    zbyte prefix[MAXUNIGRAMSIZE];
-	    memcpy (prefix, p, prefixlength);
-	    JSLF(ptr, UP, p);
-	    while ((ptr != NULL) && (memcmp(p, prefix, prefixlength) == 0)) {
-		printf("%s ", p);
-		fflush(stdout);
-		JSLN(ptr, UP, p);
-	    }
-	    printf("\n");
-	    fflush(stdout);
 	}
 
 
