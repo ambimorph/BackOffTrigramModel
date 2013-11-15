@@ -14,13 +14,12 @@ class BackOffTMPipe:
         self.stdin_byte_writer.write("iu " + token + '\n')
         return int(self.stdout.readline())
 
-    def is_unk(self):
+    def is_unk_model(self):
         self.stdin_byte_writer.write("Up\n") # Is this an unk model?
         try:
             return bool(float(self.stdout.readline()))
         except ValueError, exp:
             return False
-        
 
     def vocabulary_with_prefix(self, prefix):
         self.stdin_byte_writer.write("us " + prefix + '\n')
@@ -31,14 +30,29 @@ class BackOffTMPipe:
             self.stdin_byte_writer.write("up " + token + '\n')
             return float(self.stdout.readline())
         else:
-            self.stdin_byte_writer.write("U\n") # Is this an unk model?
+            self.stdin_byte_writer.write("Up\n") # Is this an unk model?
             try:
                 return float(self.stdout.readline())
             except ValueError, exp:
                 return None
 
+    def unigram_backoff(self, token):
+        if self.in_vocabulary(token):
+            self.stdin_byte_writer.write("ub " + token + '\n')
+            return float(self.stdout.readline())
+        else:
+            self.stdin_byte_writer.write("Ub\n") # Is this an unk model?
+            try:
+                return float(self.stdout.readline())
+            except ValueError, exp:
+                return None
+
+    def in_trigrams(self, tokens):
+        self.stdin_byte_writer.write("it " + ' '.join(tokens) + '\n')
+        return int(self.stdout.readline())
+
     def trigram_probability(self, tokens):
-        self.stdin_byte_writer.write("U\n") # Is this an unk model?
+        self.stdin_byte_writer.write("Up\n") # Is this an unk model?
         if self.stdout.readline() == "None\n":
             if reduce(lambda x, y: x and y, [self.in_vocabulary(t) for t in tokens]):
                 self.stdin_byte_writer.write("tp " + " ".join(tokens) + '\n')

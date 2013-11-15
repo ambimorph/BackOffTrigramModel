@@ -55,6 +55,18 @@ main(int argc, char** argv) {
 		    fflush(stdout);
 		}
 	    }
+	    else if (*(p+1) == 't') { // in trigrams
+		p+=3; // command and space
+		JSLG(ptr, TP, p);
+		if (ptr == NULL) {
+		    printf("0\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("1\n");
+		    fflush(stdout);
+		}
+	    }
 	}
 
 	else if (*p == 'u'){ 
@@ -64,6 +76,19 @@ main(int argc, char** argv) {
 		printf("%f\n", uniprob);
 		fflush(stdout);
 	    }
+	    else if (*(p+1) == 'b'){ // unigram backoff
+		p+=3; // command and space
+		JSLG(ptr, UB, p);
+		if (ptr == NULL) {
+		    printf("1\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("%f\n", *(float*)ptr);
+		    fflush(stdout);
+		}
+	    }
+
 	    else if (*(p+1) == 's') { // all vocabulary starting with prefix
 		p+=3; // command and space
 		size_t prefixlength = i - 3;
@@ -80,19 +105,6 @@ main(int argc, char** argv) {
 	    }
 	}
 
-	else if (*p == 'o'){ // unigram backoff
-	    p+=2; // command and space
-	    JSLG(ptr, UB, p);
-	    if (ptr == NULL) {
-		printf("1\n");
-		fflush(stdout);
-	    }
-	    else {
-		printf("%f\n", *(float*)ptr);
-		fflush(stdout);
-	    }
-	}
-
 	else if (*p == 't') {
 	    if (*(p+1) == 'p') { // trigram probability
 		p+=3; // command and space
@@ -102,29 +114,32 @@ main(int argc, char** argv) {
 	    }
 	}
 
-	else if (*p == 'w') { // trigram attested
-	    p+=2; // command and space
-	    JSLG(ptr, TP, p);
-	    if (ptr == NULL) {
-		printf("0\n");
-		fflush(stdout);
+	else if (*p == 'U') { // is this a unk model?
+	    if (*(p+1) == 'p') { // unigram probability of unk
+		*p = UNKBYTESTR[0];
+		*(p+1) = '\0';
+		JSLG(ptr, UP, p);
+		if (ptr == NULL) {
+		    printf("None\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("%f\n", *(float*)ptr);
+		    fflush(stdout);
+		}
 	    }
-	    else {
-		printf("1\n");
-		fflush(stdout);
-	    }
-	}
-
-	else if (*p == 'U') { // is this a unk model? prob of unk?
-	    *p = UNKBYTESTR[0];
-	    JSLG(ptr, UP, p);
-	    if (ptr == NULL) {
-		printf("None\n");
-		fflush(stdout);
-	    }
-	    else {
-		printf("%f\n", *(float*)ptr);
-		fflush(stdout);
+	    else if (*(p+1) == 'b') { // unigram backoff of unk
+		*p = UNKBYTESTR[0];
+		*(p+1) = '\0';
+		JSLG(ptr, UB, p);
+		if (ptr == NULL) {
+		    printf("None\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("%f\n", *(float*)ptr);
+		    fflush(stdout);
+		}
 	    }
 	}
 

@@ -21,6 +21,12 @@ class TmpipeUnklessTest(unittest.TestCase):
         assert self.unkless_tmpipe_obj.in_vocabulary('with')
         assert not self.unkless_tmpipe_obj.in_vocabulary('wax')
 
+    def test_get_vocabulary_with_prefix(self):
+        prefix = self.unkless_tmpipe_obj.vocabulary_with_prefix('c')
+        self.assertListEqual(prefix, ["can"], prefix)
+        prefix = self.unkless_tmpipe_obj.vocabulary_with_prefix("n")
+        self.assertListEqual(prefix, ["not", "nuclear"], prefix)
+
     def test_unigram_probability(self):
         probability = self.unkless_tmpipe_obj.unigram_probability('"')
         self.assertAlmostEqual(probability, -2.589533, DECIMAL_PLACES, msg=probability)
@@ -32,6 +38,16 @@ class TmpipeUnklessTest(unittest.TestCase):
         self.assertAlmostEqual(probability, -2.395761, DECIMAL_PLACES, msg=probability)
 
         probability = self.unkless_tmpipe_obj.unigram_probability('wax')
+        self.assertIs(probability, None, msg=probability)
+
+    def test_unigram_backoff(self):
+        probability = self.unkless_tmpipe_obj.unigram_backoff('"')
+        self.assertAlmostEqual(probability, 0.217034, DECIMAL_PLACES, msg=probability)
+
+        probability = self.unkless_tmpipe_obj.unigram_backoff("'s")
+        self.assertAlmostEqual(probability, -0.933541, DECIMAL_PLACES, msg=probability)
+
+        probability = self.unkless_tmpipe_obj.unigram_backoff('wax')
         self.assertIs(probability, None, msg=probability)
 
     def test_trigram_probability(self):
@@ -57,12 +73,26 @@ class TmpipeUnklessTest(unittest.TestCase):
         probability = self.unkless_tmpipe_obj.trigram_probability(["that", "they","understood"])
         self.assertIs(probability, None, msg=probability)
 
+    def test_in_trigrams(self):
+        attested = self.unkless_tmpipe_obj.in_trigrams(["that", "with","the"])
+        self.assertTrue(attested), attested
+        attested = self.unkless_tmpipe_obj.in_trigrams(["and", "that", "with"])
+        self.assertFalse(attested), attested
+
+    def test_is_unk(self):
+        self.assertFalse(self.unkless_tmpipe_obj.is_unk_model())
 
 class TmpipeUnkfulTest(unittest.TestCase):
         
     @classmethod  
     def setUpClass(cls):  
         cls.unkful_tmpipe_obj = BackOffTrigramModelPipe.BackOffTMPipe("BackOffTrigramModelPipe", "test/data/trigram_model_0.1K.arpa")
+
+    def test_in_vocabulary(self):
+        in_v = self.unkful_tmpipe_obj.in_vocabulary('that')
+        self.assertEqual(in_v, 1), in_v
+        in_v = self.unkful_tmpipe_obj.in_vocabulary('understood')
+        self.assertEqual(in_v, 0), in_v
 
     def test_get_vocabulary_with_prefix(self):
         prefix = self.unkful_tmpipe_obj.vocabulary_with_prefix('c')
@@ -106,6 +136,15 @@ class TmpipeUnkfulTest(unittest.TestCase):
         # Contains oov
         probability = self.unkful_tmpipe_obj.trigram_probability(["that", "they","understood"])
         self.assertAlmostEqual(probability, -0.4997397, DECIMAL_PLACES, msg=probability)
+
+    def test_in_trigrams(self):
+        attested = self.unkful_tmpipe_obj.in_trigrams(["that", "with","the"])
+        self.assertTrue(attested), attested
+        attested = self.unkful_tmpipe_obj.in_trigrams(["and", "that", "with"])
+        self.assertFalse(attested), attested
+
+    def test_is_unk(self):
+        self.assertTrue(self.unkful_tmpipe_obj.is_unk_model())
 
 if __name__ == '__main__':
     unittest.main()
