@@ -50,6 +50,19 @@ class TmpipeUnklessTest(unittest.TestCase):
         probability = self.unkless_tmpipe_obj.unigram_backoff('wax')
         self.assertIs(probability, None, msg=probability)
 
+    def test_in_bigrams(self):
+        self.assertTrue(self.unkless_tmpipe_obj.in_bigrams(['that', 'with']))
+        self.assertFalse(self.unkless_tmpipe_obj.in_bigrams(['with', 'with']))
+        self.assertFalse(self.unkless_tmpipe_obj.in_bigrams(['understood', 'with']))
+
+    def test_bigram_backoff(self):
+        backoff = self.unkless_tmpipe_obj.bigram_backoff(['that', 'with'])
+        self.assertAlmostEqual(backoff, -0.001158208, DECIMAL_PLACES, msg=backoff)
+        backoff = self.unkless_tmpipe_obj.bigram_backoff(['understood', 'can'])
+        self.assertIs(backoff, None), backoff
+        backoff = self.unkless_tmpipe_obj.bigram_backoff(['with', 'with'])
+        self.assertIs(backoff, None), backoff
+
     def test_trigram_probability(self):
         """
         Testing all backoff conditions.  See TrigramModel.h for formulas.
@@ -77,6 +90,8 @@ class TmpipeUnklessTest(unittest.TestCase):
         attested = self.unkless_tmpipe_obj.in_trigrams(["that", "with","the"])
         self.assertTrue(attested), attested
         attested = self.unkless_tmpipe_obj.in_trigrams(["and", "that", "with"])
+        self.assertFalse(attested), attested
+        attested = self.unkless_tmpipe_obj.in_trigrams(["and", "that", "understood"])
         self.assertFalse(attested), attested
 
     def test_is_unk(self):
@@ -114,6 +129,22 @@ class TmpipeUnkfulTest(unittest.TestCase):
         probability = self.unkful_tmpipe_obj.unigram_probability('wax')
         self.assertAlmostEqual(probability, -0.3612903, DECIMAL_PLACES, msg=probability)
 
+    def test_in_bigrams(self):
+        self.assertTrue(self.unkful_tmpipe_obj.in_bigrams(['that', 'with']))
+        self.assertTrue(self.unkful_tmpipe_obj.in_bigrams(['understood', 'can']))
+        self.assertFalse(self.unkful_tmpipe_obj.in_bigrams(['with', 'with']))
+        self.assertFalse(self.unkful_tmpipe_obj.in_bigrams(['http', 'understood']))
+
+    def test_bigram_backoff(self):
+        backoff = self.unkful_tmpipe_obj.bigram_backoff(['that', 'with'])
+        self.assertAlmostEqual(backoff, 0.05899763, DECIMAL_PLACES, msg=backoff)
+        backoff = self.unkful_tmpipe_obj.bigram_backoff(['understood', 'can'])
+        self.assertAlmostEqual(backoff, 0.1654586, DECIMAL_PLACES, msg=backoff)
+        backoff = self.unkful_tmpipe_obj.bigram_backoff(['with', 'with'])
+        self.assertIs(backoff, None), backoff
+        backoff = self.unkful_tmpipe_obj.bigram_backoff(['http', 'understood'])
+        self.assertIs(backoff, None), backoff
+
     def test_trigram_probability(self):
         """
         Testing all backoff conditions.  See TrigramModel.h for formulas.
@@ -140,7 +171,11 @@ class TmpipeUnkfulTest(unittest.TestCase):
     def test_in_trigrams(self):
         attested = self.unkful_tmpipe_obj.in_trigrams(["that", "with","the"])
         self.assertTrue(attested), attested
+        attested = self.unkful_tmpipe_obj.in_trigrams(["and", "that", "understood"])
+        self.assertTrue(attested), attested
         attested = self.unkful_tmpipe_obj.in_trigrams(["and", "that", "with"])
+        self.assertFalse(attested), attested
+        attested = self.unkful_tmpipe_obj.in_trigrams(["generation", "that", "understood"])
         self.assertFalse(attested), attested
 
     def test_is_unk(self):

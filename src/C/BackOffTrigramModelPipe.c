@@ -55,6 +55,18 @@ main(int argc, char** argv) {
 		    fflush(stdout);
 		}
 	    }
+	    else if (*(p+1) == 'b') { // in bigrams
+		p+=3; // command and space
+		JSLG(ptr, BP, p);
+		if (ptr == NULL) {
+		    printf("0\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("1\n");
+		    fflush(stdout);
+		}
+	    }
 	    else if (*(p+1) == 't') { // in trigrams
 		p+=3; // command and space
 		JSLG(ptr, TP, p);
@@ -80,7 +92,7 @@ main(int argc, char** argv) {
 		p+=3; // command and space
 		JSLG(ptr, UB, p);
 		if (ptr == NULL) {
-		    printf("1\n");
+		    printf("None\n");
 		    fflush(stdout);
 		}
 		else {
@@ -102,6 +114,21 @@ main(int argc, char** argv) {
 		}
 		printf("\n");
 		fflush(stdout);
+	    }
+	}
+
+	else if (*p == 'b'){ 
+	    if (*(p+1) == 'b'){ // bigram backoff
+		p+=3; // command and space
+		JSLG(ptr, BB, p);
+		if (ptr == NULL) {
+		    printf("None\n");
+		    fflush(stdout);
+		}
+		else {
+		    printf("%f\n", *(float*)ptr);
+		    fflush(stdout);
+		}
 	    }
 	}
 

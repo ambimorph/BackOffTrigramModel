@@ -30,7 +30,7 @@ class BackOffTMPipe:
             self.stdin_byte_writer.write("up " + token + '\n')
             return float(self.stdout.readline())
         else:
-            self.stdin_byte_writer.write("Up\n") # Is this an unk model?
+            self.stdin_byte_writer.write("Up\n") # Probability of unk
             try:
                 return float(self.stdout.readline())
             except ValueError, exp:
@@ -41,27 +41,61 @@ class BackOffTMPipe:
             self.stdin_byte_writer.write("ub " + token + '\n')
             return float(self.stdout.readline())
         else:
-            self.stdin_byte_writer.write("Ub\n") # Is this an unk model?
+            self.stdin_byte_writer.write("Ub\n") # backoff of unk
             try:
                 return float(self.stdout.readline())
             except ValueError, exp:
                 return None
 
+    def in_bigrams(self, tokens):
+        if self.is_unk_model():
+            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            self.stdin.write("ib " + ' '.join(unkified_tokens) + '\n')
+            return int(self.stdout.readline())
+        else:
+            if self.in_vocabulary(tokens[0]) and self.in_vocabulary(tokens[1]):
+                self.stdin.write("ib " + ' '.join(tokens) + '\n')
+                return int(self.stdout.readline())
+            else:
+                return False
+
+    def bigram_backoff(self, tokens):
+        if self.is_unk_model():
+            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            self.stdin.write("bb " + ' '.join(unkified_tokens) + '\n')
+            try:
+                return float(self.stdout.readline())
+            except ValueError:
+                return None
+        else:
+            self.stdin.write("bb " + ' '.join(tokens) + '\n')
+            try:
+                return float(self.stdout.readline())
+            except ValueError:
+                return None
+
     def in_trigrams(self, tokens):
-        self.stdin_byte_writer.write("it " + ' '.join(tokens) + '\n')
-        return int(self.stdout.readline())
+        if self.is_unk_model():
+            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            self.stdin.write("it " + ' '.join(unkified_tokens) + '\n')
+            return int(self.stdout.readline())
+        else:
+            if reduce(lambda x, y: x and y, [self.in_vocabulary(t) for t in tokens]):
+                self.stdin.write("it " + ' '.join(tokens) + '\n')
+                return int(self.stdout.readline())
+            else:
+                return False
 
     def trigram_probability(self, tokens):
-        self.stdin_byte_writer.write("Up\n") # Is this an unk model?
-        if self.stdout.readline() == "None\n":
+        if self.is_unk_model():
+            self.stdin_byte_writer.write("tp " + " ".join(tokens) + '\n')
+            return float(self.stdout.readline())
+        else:
             if reduce(lambda x, y: x and y, [self.in_vocabulary(t) for t in tokens]):
                 self.stdin_byte_writer.write("tp " + " ".join(tokens) + '\n')
                 return float(self.stdout.readline())
             else:
                 return None
-        else:
-            self.stdin_byte_writer.write("tp " + " ".join(tokens) + '\n')
-            return float(self.stdout.readline())
 
 
     def shutdown(self):
