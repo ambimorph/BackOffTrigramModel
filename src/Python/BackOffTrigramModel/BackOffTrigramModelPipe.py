@@ -6,6 +6,7 @@ class BackOffTMPipe:
 
     def __init__(self, pathtotmpipeexecutable, pathtolangmod):
         self.tmpipe = subprocess.Popen([pathtotmpipeexecutable, pathtolangmod], stdin=-1, stdout=-1, stderr=-1)
+        self.unkbytestr = b'\x1A'
         self.stdin = self.tmpipe.stdin
         self.stdin_byte_writer = codecs.getwriter('utf-8')(self.tmpipe.stdin)
         self.stdout = self.tmpipe.stdout
@@ -49,7 +50,7 @@ class BackOffTMPipe:
 
     def in_bigrams(self, tokens):
         if self.is_unk_model():
-            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            unkified_tokens = [t if self.in_vocabulary(t) else self.unkbytestr for t in tokens]
             self.stdin.write("ib " + ' '.join(unkified_tokens) + '\n')
             return int(self.stdout.readline())
         else:
@@ -61,7 +62,7 @@ class BackOffTMPipe:
 
     def bigram_backoff(self, tokens):
         if self.is_unk_model():
-            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            unkified_tokens = [t if self.in_vocabulary(t) else self.unkbytestr for t in tokens]
             self.stdin.write("bb " + ' '.join(unkified_tokens) + '\n')
             try:
                 return float(self.stdout.readline())
@@ -76,7 +77,7 @@ class BackOffTMPipe:
 
     def in_trigrams(self, tokens):
         if self.is_unk_model():
-            unkified_tokens = [t if self.in_vocabulary(t) else b'\xFF' for t in tokens]
+            unkified_tokens = [t if self.in_vocabulary(t) else self.unkbytestr for t in tokens]
             self.stdin.write("it " + ' '.join(unkified_tokens) + '\n')
             return int(self.stdout.readline())
         else:

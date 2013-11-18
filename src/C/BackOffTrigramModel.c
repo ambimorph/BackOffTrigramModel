@@ -480,7 +480,7 @@ split_trigram_and_unkify_in_place(zstr tri, zbyte* palimpsest, zstr*const pbi1, 
     puuni1->buf = q;
     pubi1->buf = q;
     if (ptr1 == NULL) {
-      *q++ = 0xFF;
+      *q++ = 0x1A;
     } else {
       memcpy(q, puni1->buf, puni1->len);
       q += puni1->len;
@@ -491,7 +491,7 @@ split_trigram_and_unkify_in_place(zstr tri, zbyte* palimpsest, zstr*const pbi1, 
     puuni2->buf = q;
     pubi2->buf = q;
     if (ptr2 == NULL) {
-      *q++ = 0xFF;
+      *q++ = 0x1A;
     } else {
       memcpy(q, puni2->buf, puni2->len);
       q += puni2->len;
@@ -502,7 +502,7 @@ split_trigram_and_unkify_in_place(zstr tri, zbyte* palimpsest, zstr*const pbi1, 
 
     puuni3->buf = q;
     if (ptr3 == NULL) {
-      *q++ = 0xFF;
+      *q++ = 0x1A;
     } else {
       memcpy(q, puni3->buf, puni3->len);
       q += puni3->len;

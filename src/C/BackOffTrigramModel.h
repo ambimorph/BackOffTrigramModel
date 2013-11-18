@@ -6,7 +6,7 @@ const static size_t MAXWORDSIZE=256;
 #define MAXBIGRAMSIZE ((size_t)(17 + 2 * MAXWORDSIZE))
 #define MAXTRIGRAMSIZE ((size_t)(17 + 3 * MAXWORDSIZE))
 
-const static zbyte UNKBYTESTR[]={0xFF, 0};
+const static zbyte UNKBYTESTR[]={0x1A, 0};
 
 void
 read_arpa_file(FILE* arpafile, Pvoid_t* UP, Pvoid_t* UB, Pvoid_t* BP, Pvoid_t* BB, Pvoid_t* TP);
@@ -30,7 +30,7 @@ double
 bigram_prob_2(zstr bigram, zstr unigram1, zstr unigram2, Pvoid_t* pUP, Pvoid_t* pUB, Pvoid_t* pBP);
 
 /**
- * The data must be pre-unkified (using our 0xFF unk marker).
+ * The data must be pre-unkified (using our 0x1A unk marker).
  */
 double
 trigram_prob_3(zstr trigram, zstr bigram1, zstr bigram2, zstr unigram1, zstr unigram2, zstr unigram3, Pvoid_t* pUP, Pvoid_t* pUB, Pvoid_t* pBP, Pvoid_t* pBB, Pvoid_t* pTP);
